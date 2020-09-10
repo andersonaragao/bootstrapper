@@ -12,22 +12,18 @@ namespace Bootstrapper;
  */
 class Tabbable extends RenderedObject
 {
-
     /**
      * Constant for pill tabs
      */
-    const PILL = 'pill';
-
+    const PILL = "pill";
     /**
      * Constant for tab tabs
      */
-    const TAB = 'tab';
-
+    const TAB = "tab";
     /**
      * @var Navigation The navigation array
      */
     protected $links;
-
     /**
      * @var array The contents of the navigation. Should be an array of
      * arrays, with the following inner keys:
@@ -38,24 +34,22 @@ class Tabbable extends RenderedObject
      *            </ul>
      */
     protected $contents = [];
-
     /**
      * @var int Which tab should be open first
      */
     protected $active = 0;
-
     /**
      * @var string The type
      */
     protected $type = self::TAB;
-
     /**
      * @var bool Whether we should fade in or not
      */
     protected $fade = false;
-
+    /**
+     * @var
+     */
     protected $parentId;
-
     /**
      * Creates a new Tabbable object
      *
@@ -64,10 +58,11 @@ class Tabbable extends RenderedObject
     public function __construct(Navigation $links)
     {
         $this->links = $links->autoroute(false)->withAttributes(
-            ['role' => 'tablist']
+            [
+                "role" => "tablist"
+            ]
         );
     }
-
     /**
      * Renders the tabbable object
      *
@@ -80,7 +75,6 @@ class Tabbable extends RenderedObject
 
         return $string;
     }
-
     /**
      * Creates content with a tabbed navigation
      *
@@ -95,7 +89,6 @@ class Tabbable extends RenderedObject
 
         return $this->withContents($contents);
     }
-
     /**
      * Creates content with a pill navigation
      *
@@ -110,7 +103,6 @@ class Tabbable extends RenderedObject
 
         return $this->withContents($contents);
     }
-
     /**
      * Sets the contents
      *
@@ -124,7 +116,6 @@ class Tabbable extends RenderedObject
 
         return $this;
     }
-
     /**
      * Render the navigation links
      *
@@ -133,9 +124,9 @@ class Tabbable extends RenderedObject
     protected function renderNavigation()
     {
         $this->links->links($this->createNavigationLinks());
+
         return $this->links->render();
     }
-
     /**
      * Creates the navigation links
      *
@@ -145,35 +136,41 @@ class Tabbable extends RenderedObject
     {
         $links = [];
         $count = 0;
-        
+
         foreach ($this->contents as $link) {
             $links[] = [
-                'link'           => '#' . Helpers::slug($link['title']),
-                'title'          => $link['title'],
-                'linkAttributes' => $this->createLinkAttributes($link),
-                'active'         => $count == $this->active,
-                'parentId'       => $this->parentId
+                "link" => '#' . Helpers::slug($link["title"]),
+                "title" => $link["title"],
+                "linkAttributes" => $this->createLinkAttributes($link),
+                "active" => $count == $this->active,
+                "parentId" => $this->parentId
             ];
 
             $count += 1;
         }
         return $links;
     }
-
+    /**
+     * @param $link
+     * @return array
+     */
     protected function createLinkAttributes($link)
     {
-        $attributes = ['role' => 'tab', 'data-toggle' => $this->type];
+        $attributes = [
+            "role" => "tab",
+            "data-toggle" => $this->type
+        ];
 
-        if (isset($link['data']) && is_array($link['data'])) {
-            if (isset($link['data']['data-action']) && $this->parentId) {
-                $link['data']['data-action'] = sprintf(url($link['data']['data-action']), $this->parentId);
+        if (isset($link["data"]) && is_array($link["data"])) {
+            if (isset($link["data"]["data-action"]) && $this->parentId) {
+                $link["data"]["data-action"] = sprintf(url($link["data"]["data-action"]), $this->parentId);
             }
-            $attributes = array_merge($attributes, $link['data']);
+
+            $attributes = array_merge($attributes, $link["data"]);
         }
 
         return $attributes;
     }
-
     /**
      * Renders the contents
      *
@@ -194,7 +191,6 @@ class Tabbable extends RenderedObject
 
         return $string;
     }
-
     /**
      * Creates the content tabs
      *
@@ -206,26 +202,29 @@ class Tabbable extends RenderedObject
         $count = 0;
 
         foreach ($this->contents as $item) {
-            $itemAttributes = isset($item['attributes']) ?
-                $item['attributes'] :
+            $itemAttributes = isset($item["attributes"]) ?
+                $item["attributes"] :
                 [];
 
             $attributes = new Attributes(
                 $itemAttributes,
-                ['class' => 'tab-pane', 'id' => Helpers::slug($item['title'])]
+                [
+                    "class" => "tab-pane",
+                    "id" => Helpers::slug($item["title"])
+                ]
             );
 
             if ($this->fade) {
-                $attributes->addClass('fade');
+                $attributes->addClass("fade");
             }
 
             if ($this->active == $count) {
-                $attributes->addClass($this->fade ? 'in active' : 'active');
+                $attributes->addClass($this->fade ? "in active" : "active");
             }
 
             $tabs[] = [
-                'content' => $item['content'],
-                'attributes' => $attributes
+                "content" => $item["content"],
+                "attributes" => $attributes
             ];
 
             $count += 1;
@@ -233,7 +232,6 @@ class Tabbable extends RenderedObject
 
         return $tabs;
     }
-
     /**
      * Sets which tab should be active
      *
@@ -246,7 +244,6 @@ class Tabbable extends RenderedObject
 
         return $this;
     }
-
     /**
      * Sets the tabbable objects to fade in
      *
@@ -258,7 +255,10 @@ class Tabbable extends RenderedObject
 
         return $this;
     }
-
+    /**
+     * @param $parentId
+     * @return $this
+     */
     public function parentId($parentId)
     {
         $this->parentId = $parentId;
