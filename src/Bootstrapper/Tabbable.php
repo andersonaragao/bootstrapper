@@ -161,6 +161,10 @@ class Tabbable extends RenderedObject
             "data-toggle" => $this->type
         ];
 
+        if (array_key_exists("content_id", $link)) {
+            $attributes["data-tab-content-id"] = $link["content_id"];
+        }
+
         if (isset($link["data"]) && is_array($link["data"])) {
             if (isset($link["data"]["data-action"]) && $this->parentId) {
                 $link["data"]["data-action"] = sprintf(url($link["data"]["data-action"]), $this->parentId);
@@ -179,7 +183,6 @@ class Tabbable extends RenderedObject
     protected function renderContents()
     {
         $tabs = $this->createContentTabs();
-
         $string = '<div class=\'tab-content\'>';
         $string .= "<input type='hidden' id='tab-parent_id' value='{$this->parentId}'  >";
 
@@ -210,7 +213,7 @@ class Tabbable extends RenderedObject
                 $itemAttributes,
                 [
                     "class" => "tab-pane",
-                    "id" => Helpers::slug($item["title"])
+                    "id" => array_key_exists("content_id", $item) ? $item["content_id"] : Helpers::slug($item["title"])
                 ]
             );
 
